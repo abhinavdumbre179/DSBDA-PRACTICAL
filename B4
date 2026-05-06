@@ -1,0 +1,20 @@
+# Start Hadoop Services
+sudo service hadoop-hdfs-namenode start
+sudo service hadoop-hdfs-datanode start
+# Exit Safe Mode
+sudo -u hdfs hdfs dfsadmin -safemode leave
+# Create Input File using gedit
+gedit sparksatyaminput.txt
+# (Write inside file and save:)
+# This is Satyam Patil from A4 Batch Practical
+# Upload File to HDFS
+hdfs dfs -put sparksatyaminput.txt /user/cloudera/
+# Verify File
+hdfs dfs -ls /user/cloudera/
+hdfs dfs -cat /user/cloudera/sparksatyaminput.txt
+# Start Spark Shell
+spark-shell
+# Spark Commands
+val text = sc.textFile("/user/cloudera/sparksatyaminput.txt")
+val counts = text.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey(_+_)
+counts.collect().foreach(println)
