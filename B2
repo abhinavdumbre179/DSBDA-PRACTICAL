@@ -1,0 +1,33 @@
+# Start / initialize (optional)
+sudo /home/cloudera/cloudera-manager --force --express
+# Check services
+jps
+# Extract files
+unzip partitioner.zip
+cd 06_partitioner/
+# Leave safe mode (if needed)
+sudo -u hdfs hdfs dfsadmin -safemode leave
+# Create HDFS directory (with proper permission)
+sudo -u hdfs hdfs dfs -mkdir /satyamlogs
+sudo -u hdfs hdfs dfs -chown cloudera /satyamlogs
+# Upload log file
+hdfs dfs -put access_log_short.txt /satyamlogs
+# Verify upload
+hdfs dfs -ls /satyamlogs
+# Go to solution folder
+cd sample_solution/
+# Compile Java files
+javac -cp /usr/lib/hadoop/*:/usr/lib/hadoop-0.20-mapreduce/*:/usr/lib/hadoop-mapreduce/* *.java
+# Create JAR file
+jar -cvf partitioner.jar *.class
+# (Important) Remove output folder if already exists
+hdfs dfs -rm -r /user/cloudera/outputlogs3
+
+# Run MapReduce job
+hadoop jar partitioner.jar LogAnalyzer /satyamlogs/access_log_short.txt
+/user/cloudera/outputlogs3
+# Check output
+hdfs dfs -ls /user/cloudera/outputlogs3
+# View result (January data)
+hdfs dfs -cat /user/cloudera/outputlogs3/part-00000
+
