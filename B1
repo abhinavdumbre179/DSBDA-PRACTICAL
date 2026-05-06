@@ -1,0 +1,22 @@
+# Start HDFS services
+sudo service hadoop-hdfs-namenode start sudo
+service hadoop-hdfs-datanode start
+# Leave safe mode
+sudo -u hdfs hdfs dfsadmin -safemode leave
+# Create input file
+echo "Hello Hadoop Satyam Test Data" > hellosatyam.txt
+# Remove old folders (if exist)
+hdfs dfs -rm -r /user/cloudera/inputsatyamfolder hdfs dfs
+-rm -r /user/cloudera/outputsatyamfolder
+# Create input directory
+hdfs dfs -mkdir -p /user/cloudera/inputsatyamfolder
+# Upload file
+hdfs dfs -put hellosatyam.txt /user/cloudera/inputsatyamfolder
+# Check files
+hdfs dfs -ls /user/cloudera/inputsatyamfolder
+# Run WordCount
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar wordcount
+/user/cloudera/inputsatyamfolder /user/cloudera/outputsatyamfolder
+# Check output
+hdfs dfs -ls /user/cloudera/outputsatyamfolder
+hdfs dfs -cat /user/cloudera/outputsatyamfolder/part-r-00000
